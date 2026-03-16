@@ -1,4 +1,8 @@
-export default function HeroContent() {
+interface HeroContentProps {
+  onOpenModal: () => void
+}
+
+export default function HeroContent({ onOpenModal }: HeroContentProps) {
   return (
     <main className="absolute bottom-8 left-8 z-20 max-w-lg" style={{ bottom: "calc(10vh)" }}>
       <div className="text-left">
@@ -27,6 +31,12 @@ export default function HeroContent() {
 
         {/* Buttons */}
         <div className="flex items-center gap-4 flex-wrap">
+          <button
+            onClick={onOpenModal}
+            className="px-8 py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90 active:scale-95"
+          >
+            Оставить заявку
+          </button>
           <a
             href="https://t.me/ug_transfer_online"
             target="_blank"
@@ -40,7 +50,7 @@ export default function HeroContent() {
           </a>
           <a
             href="tel:+79956141414"
-            className="px-8 py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90"
+            className="hidden md:block px-8 py-3 rounded-full bg-transparent border border-white/30 text-white font-normal text-xs transition-all duration-200 hover:bg-white/10 hover:border-white/50"
           >
             Позвонить: +7 995 614-14-14
           </a>
