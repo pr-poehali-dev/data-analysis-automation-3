@@ -24,7 +24,7 @@ export default function Header({ onOpenModal }: HeaderProps) {
             <a href="https://ug-transfer.online/" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors text-sm">
               Заказать такси
             </a>
-            <a href="#news" className="text-white/80 hover:text-white transition-colors text-sm">
+            <a href="/news" className="text-white/80 hover:text-white transition-colors text-sm">
               Новости
             </a>
           </nav>
