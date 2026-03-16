@@ -27,6 +27,9 @@ export default function Header({ onOpenModal }: HeaderProps) {
             <a href="/news" className="text-white/80 hover:text-white transition-colors text-sm">
               Новости
             </a>
+            <a href="/blog" className="text-white/80 hover:text-white transition-colors text-sm">
+              Блог
+            </a>
           </nav>
         </div>
         <nav className="flex items-center gap-4">

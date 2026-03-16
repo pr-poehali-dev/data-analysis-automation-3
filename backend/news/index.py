@@ -7,6 +7,8 @@ import psycopg2
 import psycopg2.extras
 import boto3
 
+ALLOWED_TABLES = {"news", "blog"}
+
 def get_conn():
     return psycopg2.connect(os.environ["DATABASE_URL"])
 
@@ -18,13 +20,13 @@ def get_s3():
         aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
     )
 
-def upload_image(base64_data):
+def upload_image(base64_data, folder="news"):
     if not base64_data:
         return None
     if "," in base64_data:
         base64_data = base64_data.split(",", 1)[1]
     data = base64.b64decode(base64_data)
-    filename = f"news/{uuid.uuid4().hex}.jpg"
+    filename = f"{folder}/{uuid.uuid4().hex}.jpg"
     s3 = get_s3()
     s3.put_object(Bucket="files", Key=filename, Body=data, ContentType="image/jpeg")
     return f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{filename}"
@@ -40,7 +42,7 @@ def row_to_dict(r):
     }
 
 def handler(event: dict, context) -> dict:
-    """API для управления новостями с фото и запланированной публикацией"""
+    """API для управления новостями и блогом с фото и запланированной публикацией"""
     cors = {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -52,16 +54,19 @@ def handler(event: dict, context) -> dict:
 
     method = event.get("httpMethod", "GET")
     params = event.get("queryStringParameters") or {}
-    news_id = params.get("id")
+    item_id = params.get("id")
     is_admin = params.get("admin") == "1"
+    table = params.get("type", "news")
+    if table not in ALLOWED_TABLES:
+        table = "news"
 
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     try:
         if method == "GET":
-            if news_id:
-                cur.execute("SELECT id, title, content, date::text, publish_at, image_url FROM news WHERE id = %s", (int(news_id),))
+            if item_id:
+                cur.execute(f"SELECT id, title, content, date::text, publish_at, image_url FROM {table} WHERE id = %s", (int(item_id),))
                 row = cur.fetchone()
                 if not row:
                     return {"statusCode": 404, "headers": cors, "body": json.dumps({"error": "Not found"})}
@@ -70,19 +75,22 @@ def handler(event: dict, context) -> dict:
                 data = row_to_dict(row)
             else:
                 if is_admin:
-                    cur.execute("SELECT id, title, content, date::text, publish_at, image_url FROM news ORDER BY COALESCE(publish_at, NOW()) DESC, id DESC")
+                    cur.execute(f"SELECT id, title, content, date::text, publish_at, image_url FROM {table} ORDER BY COALESCE(publish_at, NOW()) DESC, id DESC")
                 else:
-                    cur.execute("SELECT id, title, content, date::text, publish_at, image_url FROM news WHERE publish_at IS NULL OR publish_at <= NOW() ORDER BY COALESCE(publish_at, created_at) DESC, id DESC")
+                    cur.execute(f"SELECT id, title, content, date::text, publish_at, image_url FROM {table} WHERE publish_at IS NULL OR publish_at <= NOW() ORDER BY COALESCE(publish_at, created_at) DESC, id DESC")
                 data = [row_to_dict(r) for r in cur.fetchall()]
             return {"statusCode": 200, "headers": cors, "body": json.dumps(data, ensure_ascii=False)}
 
         if method == "POST":
             body = json.loads(event.get("body") or "{}")
+            post_table = body.get("type", "news")
+            if post_table not in ALLOWED_TABLES:
+                post_table = "news"
             date_val = body.get("date") or datetime.date.today().isoformat()
             publish_at_val = body.get("publish_at") or None
-            image_url = upload_image(body.get("image"))
+            image_url = upload_image(body.get("image"), post_table)
             cur.execute(
-                "INSERT INTO news (title, content, date, publish_at, image_url) VALUES (%s, %s, %s, %s, %s) RETURNING id, title, content, date::text, publish_at, image_url",
+                f"INSERT INTO {post_table} (title, content, date, publish_at, image_url) VALUES (%s, %s, %s, %s, %s) RETURNING id, title, content, date::text, publish_at, image_url",
                 (body["title"], body["content"], date_val, publish_at_val, image_url)
             )
             conn.commit()
@@ -91,17 +99,20 @@ def handler(event: dict, context) -> dict:
 
         if method == "PUT":
             body = json.loads(event.get("body") or "{}")
+            put_table = body.get("type", "news")
+            if put_table not in ALLOWED_TABLES:
+                put_table = "news"
             date_val = body.get("date") or datetime.date.today().isoformat()
             publish_at_val = body.get("publish_at") or None
-            image_url = upload_image(body.get("image"))
+            image_url = upload_image(body.get("image"), put_table)
             if image_url:
                 cur.execute(
-                    "UPDATE news SET title=%s, content=%s, date=%s, publish_at=%s, image_url=%s WHERE id=%s RETURNING id, title, content, date::text, publish_at, image_url",
+                    f"UPDATE {put_table} SET title=%s, content=%s, date=%s, publish_at=%s, image_url=%s WHERE id=%s RETURNING id, title, content, date::text, publish_at, image_url",
                     (body["title"], body["content"], date_val, publish_at_val, image_url, body["id"])
                 )
             else:
                 cur.execute(
-                    "UPDATE news SET title=%s, content=%s, date=%s, publish_at=%s WHERE id=%s RETURNING id, title, content, date::text, publish_at, image_url",
+                    f"UPDATE {put_table} SET title=%s, content=%s, date=%s, publish_at=%s WHERE id=%s RETURNING id, title, content, date::text, publish_at, image_url",
                     (body["title"], body["content"], date_val, publish_at_val, body["id"])
                 )
             conn.commit()
@@ -112,7 +123,8 @@ def handler(event: dict, context) -> dict:
             return {"statusCode": 200, "headers": cors, "body": json.dumps(data, ensure_ascii=False)}
 
         if method == "DELETE":
-            cur.execute("DELETE FROM news WHERE id = %s", (int(news_id),))
+            del_table = table
+            cur.execute(f"DELETE FROM {del_table} WHERE id = %s", (int(item_id),))
             conn.commit()
             return {"statusCode": 200, "headers": cors, "body": json.dumps({"ok": True})}
 

@@ -46,6 +46,7 @@ export default function Admin() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
+  const [activeTab, setActiveTab] = useState<"news" | "blog">("news")
   const [news, setNews] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -66,7 +67,7 @@ export default function Admin() {
 
   async function loadNews() {
     setLoading(true)
-    const r = await fetch(`${NEWS_URL}?admin=1`)
+    const r = await fetch(`${NEWS_URL}?admin=1&type=${activeTab}`)
     const data = await r.json()
     setNews(data)
     setLoading(false)
@@ -74,7 +75,7 @@ export default function Admin() {
 
   useEffect(() => {
     if (isAuth) loadNews()
-  }, [isAuth])
+  }, [isAuth, activeTab])
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -100,6 +101,7 @@ export default function Admin() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        type: activeTab,
         title: form.title,
         content: form.content,
         date: form.date || undefined,
@@ -132,6 +134,7 @@ export default function Admin() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        type: activeTab,
         id: editId,
         title: form.title,
         content: form.content,
@@ -148,10 +151,20 @@ export default function Admin() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm("Удалить новость?")) return
-    await fetch(`${NEWS_URL}?id=${id}`, { method: "DELETE" })
+    if (!confirm("Удалить запись?")) return
+    await fetch(`${NEWS_URL}?id=${id}&type=${activeTab}`, { method: "DELETE" })
     await loadNews()
   }
+
+  function switchTab(tab: "news" | "blog") {
+    setActiveTab(tab)
+    setEditId(null)
+    setForm({ title: "", content: "", date: "", publish_at: "" })
+    clearImage()
+  }
+
+  const tabLabel = activeTab === "news" ? "новость" : "статью"
+  const tabLabelPlural = activeTab === "news" ? "новостей" : "статей"
 
   if (!isAuth) {
     return (
@@ -201,14 +214,14 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-zinc-950 px-4 py-8">
       <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-white text-xl font-medium">Управление новостями</h1>
-            <p className="text-white/40 text-xs mt-0.5">Публикация и редактирование новостей</p>
+            <h1 className="text-white text-xl font-medium">Панель управления</h1>
+            <p className="text-white/40 text-xs mt-0.5">Публикация и редактирование контента</p>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={() => navigate("/news")} className="text-white/40 hover:text-white/70 text-xs transition-colors">
-              Страница новостей
+            <button onClick={() => navigate(activeTab === "news" ? "/news" : "/blog")} className="text-white/40 hover:text-white/70 text-xs transition-colors">
+              Смотреть на сайте
             </button>
             <button onClick={() => navigate("/")} className="text-white/40 hover:text-white/70 text-xs transition-colors">
               На главную
@@ -219,10 +232,25 @@ export default function Admin() {
           </div>
         </div>
 
+        <div className="flex gap-1 mb-6 bg-zinc-900 rounded-lg p-1 w-fit">
+          <button
+            onClick={() => switchTab("news")}
+            className={`px-4 py-2 rounded-md text-sm transition-all ${activeTab === "news" ? "bg-yellow-400 text-black font-medium" : "text-white/50 hover:text-white"}`}
+          >
+            Новости
+          </button>
+          <button
+            onClick={() => switchTab("blog")}
+            className={`px-4 py-2 rounded-md text-sm transition-all ${activeTab === "blog" ? "bg-yellow-400 text-black font-medium" : "text-white/50 hover:text-white"}`}
+          >
+            Блог
+          </button>
+        </div>
+
         {/* Форма */}
         <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 mb-6 border-t-2 border-t-yellow-400">
           <h2 className="text-white text-sm font-medium mb-4">
-            {editId ? "Редактировать новость" : "Новая публикация"}
+            {editId ? `Редактировать ${tabLabel}` : `Новая ${activeTab === "news" ? "новость" : "статья"}`}
           </h2>
           <div className="flex flex-col gap-3">
             <input
@@ -309,7 +337,7 @@ export default function Admin() {
         )}
         <div className="flex flex-col gap-3">
           {!loading && news.length === 0 && (
-            <p className="text-white/30 text-sm text-center py-8">Новостей пока нет</p>
+            <p className="text-white/30 text-sm text-center py-8">{activeTab === "news" ? "Новостей" : "Статей"} пока нет</p>
           )}
           {news.map(item => (
             <div key={item.id} className={`bg-zinc-900 border rounded-xl p-5 ${isPublished(item) ? "border-white/10" : "border-amber-400/20"}`}>
@@ -330,7 +358,7 @@ export default function Admin() {
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <button
-                    onClick={() => navigate(`/news/${item.id}`)}
+                    onClick={() => navigate(`/${activeTab}/${item.id}`)}
                     className="text-white/30 hover:text-white text-xs transition-colors"
                   >
                     Просмотр
