@@ -2,52 +2,10 @@ import json
 import os
 import urllib.request
 import urllib.parse
-import smtplib
-import socket
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
-
-def send_email(name, phone, city, comment):
-    """Отправка заявки на почту через Gmail SMTP"""
-    gmail_password = os.environ.get("GMAIL_APP_PASSWORD")
-    if not gmail_password:
-        return False
-
-    sender = "Yaltataran@gmail.com"
-    receiver = "Yaltataran@gmail.com"
-
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"Заявка на эвакуатор от {name}"
-    msg["From"] = sender
-    msg["To"] = receiver
-
-    html = f"""
-    <div style="font-family:Arial,sans-serif;max-width:500px;padding:20px;border:1px solid #e0e0e0;border-radius:12px;">
-        <h2 style="color:#333;margin-bottom:16px;">Новая заявка на эвакуатор</h2>
-        <table style="width:100%;border-collapse:collapse;">
-            <tr><td style="padding:8px 0;color:#888;width:120px;">Имя:</td><td style="padding:8px 0;font-weight:bold;">{name}</td></tr>
-            <tr><td style="padding:8px 0;color:#888;">Телефон:</td><td style="padding:8px 0;font-weight:bold;"><a href="tel:{phone}">{phone}</a></td></tr>
-            <tr><td style="padding:8px 0;color:#888;">Город:</td><td style="padding:8px 0;">{city if city else 'не указан'}</td></tr>
-            <tr><td style="padding:8px 0;color:#888;">Комментарий:</td><td style="padding:8px 0;">{comment if comment else 'нет'}</td></tr>
-        </table>
-    </div>
-    """
-
-    msg.attach(MIMEText(html, "html"))
-
-    socket.setdefaulttimeout(10)
-    server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
-    server.ehlo()
-    server.starttls()
-    server.login(sender, gmail_password)
-    server.sendmail(sender, receiver, msg.as_string())
-    server.quit()
-    return True
 
 
 def handler(event: dict, context) -> dict:
-    """Отправляет заявку с сайта эвакуатора в Telegram и на почту."""
+    """Отправляет заявку с сайта эвакуатора в Telegram."""
 
     if event.get('httpMethod') == 'OPTIONS':
         return {
@@ -82,10 +40,8 @@ def handler(event: dict, context) -> dict:
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
     chat_id = '-1002146850254'
     message_thread_id = 6224
-    print(f"TELEGRAM: token={'YES' if bot_token else 'NO'}, chat_id={chat_id}")
 
     if bot_token:
-
         text = (
             f"🚗 *Новая заявка на эвакуатор*\n\n"
             f"👤 *Имя:* {name}\n"
@@ -102,18 +58,8 @@ def handler(event: dict, context) -> dict:
             'message_thread_id': message_thread_id
         }).encode()
 
-        try:
-            req = urllib.request.Request(tg_url, data=data, method='POST')
-            resp = urllib.request.urlopen(req)
-            print(f"TELEGRAM: sent OK, status={resp.status}")
-        except Exception as e:
-            print(f"TELEGRAM ERROR: {e}")
-
-    try:
-        send_email(name, phone, city, comment)
-        print("EMAIL: sent OK")
-    except Exception as e:
-        print(f"EMAIL ERROR: {e}")
+        req = urllib.request.Request(tg_url, data=data, method='POST')
+        urllib.request.urlopen(req)
 
     return {
         'statusCode': 200,
