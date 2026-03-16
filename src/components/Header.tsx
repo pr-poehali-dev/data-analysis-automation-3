@@ -1,10 +1,13 @@
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import PartnersModal from "@/components/PartnersModal"
 
 interface HeaderProps {
   onOpenModal: () => void
 }
 
 export default function Header({ onOpenModal }: HeaderProps) {
+  const [partnersOpen, setPartnersOpen] = useState(false)
   const navigate = useNavigate()
   return (
     <header className="fixed top-0 left-0 right-0 z-50 p-6 bg-black/60 backdrop-blur-md transition-all duration-300">
@@ -30,6 +33,9 @@ export default function Header({ onOpenModal }: HeaderProps) {
             <a href="/blog" className="text-white/80 hover:text-white transition-colors text-sm">
               Блог
             </a>
+            <button onClick={() => setPartnersOpen(true)} className="text-white/80 hover:text-white transition-colors text-sm">
+              Партнёры
+            </button>
           </nav>
         </div>
         <nav className="flex items-center gap-4">
@@ -82,6 +88,7 @@ export default function Header({ onOpenModal }: HeaderProps) {
         </nav>
       </div>
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-yellow-400" />
+      <PartnersModal open={partnersOpen} onClose={() => setPartnersOpen(false)} />
     </header>
   )
 }
