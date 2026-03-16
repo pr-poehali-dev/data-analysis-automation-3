@@ -5,7 +5,7 @@ interface FooterProps {
 export default function Footer({ onOpenPolicy }: FooterProps) {
   return (
     <footer className="relative z-20 w-full bg-black/40 backdrop-blur-md border-t-2 border-yellow-400 px-6 py-8">
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* О нас */}
         <div>
           <h3 className="text-white font-medium text-sm mb-3">О нас</h3>
@@ -38,6 +38,25 @@ export default function Footer({ onOpenPolicy }: FooterProps) {
               className="text-white/60 text-xs hover:text-white transition-colors"
             >
               Telegram
+            </a>
+          </div>
+        </div>
+
+        {/* Разделы */}
+        <div>
+          <h3 className="text-white font-medium text-sm mb-3">Разделы</h3>
+          <div className="flex flex-col gap-2">
+            <a href="/" className="text-white/60 text-xs hover:text-white transition-colors">
+              Главная
+            </a>
+            <a href="/news" className="text-white/60 text-xs hover:text-white transition-colors">
+              Новости
+            </a>
+            <a href="/blog" className="text-white/60 text-xs hover:text-white transition-colors">
+              Блог
+            </a>
+            <a href="https://ug-transfer.online/" target="_blank" rel="noopener noreferrer" className="text-white/60 text-xs hover:text-white transition-colors">
+              Заказать такси
             </a>
           </div>
         </div>
