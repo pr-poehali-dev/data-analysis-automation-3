@@ -45,6 +45,22 @@ export default function OrderForm() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
+  const handlePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let digits = e.target.value.replace(/\D/g, "")
+    if (digits.startsWith("8")) digits = "7" + digits.slice(1)
+    if (!digits.startsWith("7") && digits.length > 0) digits = "7" + digits
+    digits = digits.slice(0, 11)
+
+    let formatted = ""
+    if (digits.length > 0) formatted = "+" + digits.slice(0, 1)
+    if (digits.length > 1) formatted += " (" + digits.slice(1, 4)
+    if (digits.length > 4) formatted += ") " + digits.slice(4, 7)
+    if (digits.length > 7) formatted += "-" + digits.slice(7, 9)
+    if (digits.length > 9) formatted += "-" + digits.slice(9, 11)
+
+    setForm({ ...form, phone: formatted })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus("loading")
@@ -107,10 +123,10 @@ export default function OrderForm() {
             <input
               name="phone"
               value={form.phone}
-              onChange={handleChange}
+              onChange={handlePhone}
               required
               type="tel"
-              placeholder="Телефон *"
+              placeholder="+7 (___) ___-__-__"
               className={inputClass}
             />
             <input
