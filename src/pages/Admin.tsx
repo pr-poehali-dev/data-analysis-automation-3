@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 
 const ADMIN_LOGIN = "Yalta"
 const ADMIN_PASSWORD = "Yalta220577"
+const NEWS_URL = "https://functions.poehali.dev/1279db87-9326-4b6d-9988-ad8a408d5f79"
 
 interface NewsItem {
   id: number
@@ -18,9 +19,9 @@ export default function Admin() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
-  const [news, setNews] = useState<NewsItem[]>([
-    { id: 1, title: "Открыли новое направление — Феодосия", content: "Теперь принимаем заказы на эвакуатор в Феодосию и обратно. Работаем 24/7.", date: "2024-01-15" },
-  ])
+  const [news, setNews] = useState<NewsItem[]>([])
+  const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<number | null>(null)
   const [form, setForm] = useState({ title: "", content: "", date: "" })
 
@@ -34,16 +35,29 @@ export default function Admin() {
     }
   }
 
-  function handleAdd() {
+  async function loadNews() {
+    setLoading(true)
+    const r = await fetch(NEWS_URL)
+    const data = await r.json()
+    setNews(data)
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    if (isAuth) loadNews()
+  }, [isAuth])
+
+  async function handleAdd() {
     if (!form.title || !form.content) return
-    const newItem: NewsItem = {
-      id: Date.now(),
-      title: form.title,
-      content: form.content,
-      date: form.date || new Date().toISOString().split("T")[0],
-    }
-    setNews([newItem, ...news])
+    setSaving(true)
+    await fetch(NEWS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: form.title, content: form.content, date: form.date || undefined }),
+    })
     setForm({ title: "", content: "", date: "" })
+    await loadNews()
+    setSaving(false)
   }
 
   function handleEdit(item: NewsItem) {
@@ -51,14 +65,24 @@ export default function Admin() {
     setForm({ title: item.title, content: item.content, date: item.date })
   }
 
-  function handleSave() {
-    setNews(news.map(n => n.id === editId ? { ...n, ...form } : n))
+  async function handleSave() {
+    if (!editId) return
+    setSaving(true)
+    await fetch(NEWS_URL, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: editId, title: form.title, content: form.content, date: form.date }),
+    })
     setEditId(null)
     setForm({ title: "", content: "", date: "" })
+    await loadNews()
+    setSaving(false)
   }
 
-  function handleDelete(id: number) {
-    setNews(news.filter(n => n.id !== id))
+  async function handleDelete(id: number) {
+    if (!confirm("Удалить новость?")) return
+    await fetch(`${NEWS_URL}?id=${id}`, { method: "DELETE" })
+    await loadNews()
   }
 
   if (!isAuth) {
@@ -115,6 +139,9 @@ export default function Admin() {
             <p className="text-white/40 text-xs mt-0.5">Публикация и редактирование новостей</p>
           </div>
           <div className="flex items-center gap-3">
+            <button onClick={() => navigate("/news")} className="text-white/40 hover:text-white/70 text-xs transition-colors">
+              Страница новостей
+            </button>
             <button onClick={() => navigate("/")} className="text-white/40 hover:text-white/70 text-xs transition-colors">
               На главную
             </button>
@@ -124,7 +151,7 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Форма добавления / редактирования */}
+        {/* Форма */}
         <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 mb-6">
           <h2 className="text-white text-sm font-medium mb-4">
             {editId ? "Редактировать новость" : "Новая публикация"}
@@ -141,7 +168,7 @@ export default function Admin() {
               placeholder="Текст новости"
               value={form.content}
               onChange={e => setForm({ ...form, content: e.target.value })}
-              rows={4}
+              rows={5}
               className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/30 resize-none"
             />
             <input
@@ -153,25 +180,42 @@ export default function Admin() {
             <div className="flex gap-2">
               {editId ? (
                 <>
-                  <button onClick={handleSave} className="flex-1 bg-white text-black text-sm font-medium py-2.5 rounded-lg hover:bg-white/90 active:scale-95 transition-all duration-200">
-                    Сохранить
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex-1 bg-white text-black text-sm font-medium py-2.5 rounded-lg hover:bg-white/90 active:scale-95 transition-all duration-200 disabled:opacity-50"
+                  >
+                    {saving ? "Сохранение..." : "Сохранить"}
                   </button>
-                  <button onClick={() => { setEditId(null); setForm({ title: "", content: "", date: "" }) }} className="px-4 py-2.5 rounded-lg border border-white/10 text-white/50 text-sm hover:border-white/30 transition-colors">
+                  <button
+                    onClick={() => { setEditId(null); setForm({ title: "", content: "", date: "" }) }}
+                    className="px-4 py-2.5 rounded-lg border border-white/10 text-white/50 text-sm hover:border-white/30 transition-colors"
+                  >
                     Отмена
                   </button>
                 </>
               ) : (
-                <button onClick={handleAdd} className="flex-1 bg-white text-black text-sm font-medium py-2.5 rounded-lg hover:bg-white/90 active:scale-95 transition-all duration-200">
-                  Опубликовать
+                <button
+                  onClick={handleAdd}
+                  disabled={saving || !form.title || !form.content}
+                  className="flex-1 bg-white text-black text-sm font-medium py-2.5 rounded-lg hover:bg-white/90 active:scale-95 transition-all duration-200 disabled:opacity-50"
+                >
+                  {saving ? "Публикация..." : "Опубликовать"}
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Список новостей */}
+        {/* Список */}
+        {loading && (
+          <div className="flex gap-2 items-center text-white/30 text-sm py-4">
+            <div className="w-4 h-4 border border-white/20 border-t-white/60 rounded-full animate-spin" />
+            Загрузка...
+          </div>
+        )}
         <div className="flex flex-col gap-3">
-          {news.length === 0 && (
+          {!loading && news.length === 0 && (
             <p className="text-white/30 text-sm text-center py-8">Новостей пока нет</p>
           )}
           {news.map(item => (
@@ -182,7 +226,13 @@ export default function Admin() {
                   <h3 className="text-white text-sm font-medium mb-1 truncate">{item.title}</h3>
                   <p className="text-white/60 text-xs leading-relaxed line-clamp-2">{item.content}</p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-3 shrink-0">
+                  <button
+                    onClick={() => navigate(`/news/${item.id}`)}
+                    className="text-white/30 hover:text-white text-xs transition-colors"
+                  >
+                    Просмотр
+                  </button>
                   <button onClick={() => handleEdit(item)} className="text-white/40 hover:text-white text-xs transition-colors">
                     Изменить
                   </button>
