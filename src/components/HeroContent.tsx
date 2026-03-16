@@ -4,8 +4,9 @@ interface HeroContentProps {
 
 export default function HeroContent({ onOpenModal }: HeroContentProps) {
   return (
-    <main className="absolute inset-0 flex items-center md:items-end px-6 md:px-0 md:left-8 md:right-auto md:bottom-[10vh] z-20 max-w-lg md:max-w-lg mx-auto md:mx-0">
-      <div className="text-left">
+    <main className="absolute inset-0 z-20 flex items-center md:items-end px-6 md:px-8">
+      <div className="flex w-full items-end md:items-center md:pb-0 pb-0">
+      <div className="text-left max-w-lg md:mb-[10vh]">
         <div
           className="inline-flex items-center px-3 py-1 rounded-full bg-white/5 backdrop-blur-sm mb-4 relative"
           style={{
@@ -61,6 +62,14 @@ export default function HeroContent({ onOpenModal }: HeroContentProps) {
             Позвонить: +7 995 614-14-14
           </a>
         </div>
+      </div>
+      <div className="hidden md:flex flex-1 justify-end items-end mb-[10vh]">
+        <img
+          src="https://cdn.poehali.dev/projects/b275e081-8e63-4958-8c50-b2e74190fc81/bucket/1eec948d-f678-41ff-add6-277e63ed612e.jpg"
+          alt="Эвакуатор"
+          className="max-w-[550px] w-full object-contain drop-shadow-2xl"
+        />
+      </div>
       </div>
     </main>
   )
