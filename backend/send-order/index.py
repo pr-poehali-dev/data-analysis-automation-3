@@ -3,15 +3,16 @@ import os
 import urllib.request
 import urllib.parse
 import smtplib
+import socket
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
 def send_email(name, phone, city, comment):
-    """Отправка заявки на почту"""
+    """Отправка заявки на почту через Gmail SMTP"""
     gmail_password = os.environ.get("GMAIL_APP_PASSWORD")
     if not gmail_password:
-        return
+        return False
 
     sender = "Yaltataran@gmail.com"
     receiver = "Yaltataran@gmail.com"
@@ -35,9 +36,14 @@ def send_email(name, phone, city, comment):
 
     msg.attach(MIMEText(html, "html"))
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(sender, gmail_password)
-        server.sendmail(sender, receiver, msg.as_string())
+    socket.setdefaulttimeout(10)
+    server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
+    server.ehlo()
+    server.starttls()
+    server.login(sender, gmail_password)
+    server.sendmail(sender, receiver, msg.as_string())
+    server.quit()
+    return True
 
 
 def handler(event: dict, context) -> dict:
