@@ -15,6 +15,12 @@ const partners: Partner[] = [
     url: "https://exursyalta.ru/",
     icon: "Map",
   },
+  {
+    name: "Заказать такси",
+    description: "Трансфер и такси по Крыму. Комфортные поездки по доступным ценам.",
+    url: "https://ug-transfer.online/",
+    icon: "Car",
+  },
 ]
 
 interface PartnersModalProps {
