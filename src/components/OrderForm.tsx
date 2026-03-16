@@ -32,7 +32,7 @@ export default function OrderForm() {
   }
 
   return (
-    <section className="relative z-20 w-full flex justify-center px-6 py-16">
+    <div className="relative z-20 w-full flex justify-center">
       <div
         className="w-full max-w-md rounded-2xl p-8"
         style={{
@@ -120,6 +120,6 @@ export default function OrderForm() {
           </form>
         )}
       </div>
-    </section>
+    </div>
   )
 }
