@@ -2,10 +2,46 @@ import json
 import os
 import urllib.request
 import urllib.parse
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+
+def send_email(name, phone, city, comment):
+    """Отправка заявки на почту"""
+    gmail_password = os.environ.get("GMAIL_APP_PASSWORD")
+    if not gmail_password:
+        return
+
+    sender = "Yaltataran@gmail.com"
+    receiver = "Yaltataran@gmail.com"
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"Заявка на эвакуатор от {name}"
+    msg["From"] = sender
+    msg["To"] = receiver
+
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:500px;padding:20px;border:1px solid #e0e0e0;border-radius:12px;">
+        <h2 style="color:#333;margin-bottom:16px;">Новая заявка на эвакуатор</h2>
+        <table style="width:100%;border-collapse:collapse;">
+            <tr><td style="padding:8px 0;color:#888;width:120px;">Имя:</td><td style="padding:8px 0;font-weight:bold;">{name}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Телефон:</td><td style="padding:8px 0;font-weight:bold;"><a href="tel:{phone}">{phone}</a></td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Город:</td><td style="padding:8px 0;">{city if city else 'не указан'}</td></tr>
+            <tr><td style="padding:8px 0;color:#888;">Комментарий:</td><td style="padding:8px 0;">{comment if comment else 'нет'}</td></tr>
+        </table>
+    </div>
+    """
+
+    msg.attach(MIMEText(html, "html"))
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(sender, gmail_password)
+        server.sendmail(sender, receiver, msg.as_string())
 
 
 def handler(event: dict, context) -> dict:
-    """Отправляет заявку с сайта эвакуатора в Telegram-чат."""
+    """Отправляет заявку с сайта эвакуатора в Telegram и на почту."""
 
     if event.get('httpMethod') == 'OPTIONS':
         return {
@@ -34,42 +70,40 @@ def handler(event: dict, context) -> dict:
         return {
             'statusCode': 400,
             'headers': {'Access-Control-Allow-Origin': '*'},
-            'body': {'error': 'Имя и телефон обязательны'}
+            'body': json.dumps({'error': 'Имя и телефон обязательны'})
         }
 
-    bot_token = os.environ['TELEGRAM_BOT_TOKEN']
-    chat_id = '-1002146850254'
-    message_thread_id = 6224
+    bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
+    if bot_token:
+        chat_id = '-1002146850254'
+        message_thread_id = 6224
 
-    text = (
-        f"🚗 *Новая заявка на эвакуатор*\n\n"
-        f"👤 *Имя:* {name}\n"
-        f"📞 *Телефон:* {phone}\n"
-        f"📍 *Город:* {city if city else 'не указан'}\n"
-        f"💬 *Комментарий:* {comment if comment else 'нет'}"
-    )
+        text = (
+            f"🚗 *Новая заявка на эвакуатор*\n\n"
+            f"👤 *Имя:* {name}\n"
+            f"📞 *Телефон:* {phone}\n"
+            f"📍 *Город:* {city if city else 'не указан'}\n"
+            f"💬 *Комментарий:* {comment if comment else 'нет'}"
+        )
 
-    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-    data = urllib.parse.urlencode({
-        'chat_id': chat_id,
-        'text': text,
-        'parse_mode': 'Markdown',
-        'message_thread_id': message_thread_id
-    }).encode()
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        data = urllib.parse.urlencode({
+            'chat_id': chat_id,
+            'text': text,
+            'parse_mode': 'Markdown',
+            'message_thread_id': message_thread_id
+        }).encode()
 
-    req = urllib.request.Request(url, data=data, method='POST')
-    with urllib.request.urlopen(req) as resp:
-        result = json.loads(resp.read())
+        req = urllib.request.Request(url, data=data, method='POST')
+        urllib.request.urlopen(req)
 
-    if not result.get('ok'):
-        return {
-            'statusCode': 500,
-            'headers': {'Access-Control-Allow-Origin': '*'},
-            'body': {'error': 'Ошибка отправки в Telegram'}
-        }
+    try:
+        send_email(name, phone, city, comment)
+    except Exception:
+        pass
 
     return {
         'statusCode': 200,
         'headers': {'Access-Control-Allow-Origin': '*'},
-        'body': {'success': True}
+        'body': json.dumps({'success': True})
     }
