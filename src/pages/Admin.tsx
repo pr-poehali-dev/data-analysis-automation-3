@@ -134,7 +134,7 @@ export default function Admin() {
           <button onClick={() => navigate("/")} className="text-white/40 hover:text-white/70 text-xs mb-8 flex items-center gap-1 transition-colors">
             ← На главную
           </button>
-          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8">
+          <div className="bg-zinc-900 border border-white/10 rounded-2xl p-8 border-t-2 border-t-yellow-400">
             <h1 className="text-white text-xl font-medium mb-1">Вход в панель</h1>
             <p className="text-white/40 text-xs mb-6">Управление новостями сайта</p>
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -194,7 +194,7 @@ export default function Admin() {
         </div>
 
         {/* Форма */}
-        <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 mb-6">
+        <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 mb-6 border-t-2 border-t-yellow-400">
           <h2 className="text-white text-sm font-medium mb-4">
             {editId ? "Редактировать новость" : "Новая публикация"}
           </h2>

@@ -39,7 +39,8 @@ export default function News() {
       <main className="flex-1 pt-28 pb-16 px-6">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-white text-3xl font-light mb-2">Новости</h1>
-          <p className="text-white/40 text-sm mb-10">Актуальная информация об эвакуаторе в Крыму</p>
+          <p className="text-white/40 text-sm mb-4">Актуальная информация об эвакуаторе в Крыму</p>
+          <div className="w-12 h-[2px] bg-yellow-400 mb-10" />
 
           {loading && (
             <div className="flex gap-2 items-center text-white/30 text-sm">
@@ -57,7 +58,7 @@ export default function News() {
               <article
                 key={item.id}
                 onClick={() => navigate(`/news/${item.id}`)}
-                className="group bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl p-6 cursor-pointer transition-all duration-200"
+                className="group bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl p-6 cursor-pointer transition-all duration-200 border-l-2 border-l-yellow-400"
               >
                 <p className="text-white/40 text-xs mb-2">{formatDate(item.date)}</p>
                 <h2 className="text-white text-base font-medium mb-2 group-hover:text-white/90 transition-colors">{item.title}</h2>

@@ -69,7 +69,8 @@ export default function NewsDetail() {
           {item && (
             <article>
               <p className="text-white/40 text-xs mb-3">{formatDate(item.date)}</p>
-              <h1 className="text-white text-2xl md:text-3xl font-light mb-6 leading-snug">{item.title}</h1>
+              <h1 className="text-white text-2xl md:text-3xl font-light mb-4 leading-snug">{item.title}</h1>
+              <div className="w-12 h-[2px] bg-yellow-400 mb-6" />
               <div className="text-white/70 text-sm leading-relaxed whitespace-pre-wrap">{item.content}</div>
             </article>
           )}

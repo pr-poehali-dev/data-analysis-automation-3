@@ -44,7 +44,8 @@ export default function OrderForm() {
         <h2 className="text-white text-2xl font-light mb-1">
           Оставьте <span className="font-medium italic">заявку</span>
         </h2>
-        <p className="text-white/50 text-xs mb-6">Перезвоним в течение 5 минут</p>
+        <p className="text-white/50 text-xs mb-3">Перезвоним в течение 5 минут</p>
+        <div className="w-12 h-[2px] bg-yellow-400 mb-6" />
 
         {status === "success" ? (
           <div className="flex flex-col items-center gap-4 py-8 text-center">

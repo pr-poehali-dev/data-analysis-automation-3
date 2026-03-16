@@ -84,7 +84,7 @@ export default function PolicyModal({ open, type, onClose }: PolicyModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="bg-zinc-900 border border-white/10 text-white max-w-lg max-h-[80vh] overflow-y-auto">
+      <DialogContent className="bg-zinc-900 border border-white/10 border-t-2 border-t-yellow-400 text-white max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-white text-lg font-medium">{title}</DialogTitle>
         </DialogHeader>

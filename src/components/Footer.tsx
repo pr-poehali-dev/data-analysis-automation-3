@@ -62,7 +62,7 @@ export default function Footer({ onOpenPolicy }: FooterProps) {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto mt-8 pt-4 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-2">
+      <div className="max-w-5xl mx-auto mt-8 pt-4 border-t border-yellow-400/30 flex flex-col md:flex-row items-center justify-between gap-2">
         <p className="text-white/40 text-xs">© 2024 Эвакуатор Крым. Все права защищены.</p>
         <p className="text-white/40 text-xs">Крым · Симферополь · Ялта · Севастополь · Керчь</p>
       </div>
