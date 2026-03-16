@@ -27,8 +27,8 @@ def handler(event: dict, context) -> dict:
 
     name = body.get('name', '').strip()
     phone = body.get('phone', '').strip()
-    city = body.get('city', '').strip()
-    comment = body.get('comment', '').strip()
+    order_type = body.get('orderType', 'city')
+    price = body.get('price', '')
 
     if not name or not phone:
         return {
@@ -37,19 +37,32 @@ def handler(event: dict, context) -> dict:
             'body': json.dumps({'error': 'Имя и телефон обязательны'})
         }
 
+    if order_type == 'route':
+        route_from = body.get('from', '').strip()
+        route_to = body.get('to', '').strip()
+        text = (
+            f"🚗 *Новая заявка — маршрут*\n\n"
+            f"📞 *Телефон:* {phone}\n"
+            f"👤 *Имя:* {name}\n"
+            f"📍 *Откуда:* {route_from}\n"
+            f"🏁 *Куда:* {route_to}\n"
+            f"💰 *Стоимость:* {price}"
+        )
+    else:
+        city = body.get('city', '').strip()
+        text = (
+            f"🚗 *Новая заявка — по городу*\n\n"
+            f"📞 *Телефон:* {phone}\n"
+            f"👤 *Имя:* {name}\n"
+            f"📍 *Город:* {city}\n"
+            f"💰 *Стоимость:* {price}"
+        )
+
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
     chat_id = '-1002146850254'
     message_thread_id = 6224
 
     if bot_token:
-        text = (
-            f"🚗 *Новая заявка на эвакуатор*\n\n"
-            f"👤 *Имя:* {name}\n"
-            f"📞 *Телефон:* {phone}\n"
-            f"📍 *Город:* {city if city else 'не указан'}\n"
-            f"💬 *Комментарий:* {comment if comment else 'нет'}"
-        )
-
         tg_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         data = urllib.parse.urlencode({
             'chat_id': chat_id,
