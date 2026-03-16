@@ -48,6 +48,12 @@ export default function HeroContent({ onOpenModal }: HeroContentProps) {
             </svg>
             Написать в Telegram
           </a>
+          <button
+            onClick={onOpenModal}
+            className="hidden md:block px-8 py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90 active:scale-95"
+          >
+            Оставить заявку
+          </button>
           <a
             href="tel:+79956141414"
             className="hidden md:block px-8 py-3 rounded-full bg-transparent border border-white/30 text-white font-normal text-xs transition-all duration-200 hover:bg-white/10 hover:border-white/50"
