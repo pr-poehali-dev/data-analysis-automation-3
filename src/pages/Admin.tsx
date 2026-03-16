@@ -213,25 +213,14 @@ export default function Admin() {
               rows={5}
               className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/30 resize-none"
             />
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <label className="text-white/40 text-xs mb-1 block">Дата новости</label>
-                <input
-                  type="date"
-                  value={form.date}
-                  onChange={e => setForm({ ...form, date: e.target.value })}
-                  className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="text-white/40 text-xs mb-1 block">Дата и время публикации</label>
-                <input
-                  type="datetime-local"
-                  value={form.publish_at}
-                  onChange={e => setForm({ ...form, publish_at: e.target.value })}
-                  className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors"
-                />
-              </div>
+            <div>
+              <label className="text-white/40 text-xs mb-1 block">Дата и время публикации</label>
+              <input
+                type="datetime-local"
+                value={form.publish_at}
+                onChange={e => setForm({ ...form, publish_at: e.target.value })}
+                className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors"
+              />
             </div>
             {form.publish_at && new Date(form.publish_at) > new Date() && (
               <p className="text-amber-400/70 text-xs flex items-center gap-1">
