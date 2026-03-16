@@ -4,7 +4,7 @@ interface HeroContentProps {
 
 export default function HeroContent({ onOpenModal }: HeroContentProps) {
   return (
-    <main className="absolute bottom-8 left-8 z-20 max-w-lg" style={{ bottom: "calc(10vh)" }}>
+    <main className="absolute left-6 right-6 top-24 md:top-auto md:left-8 md:right-auto md:bottom-[10vh] z-20 max-w-lg">
       <div className="text-left">
         <div
           className="inline-flex items-center px-3 py-1 rounded-full bg-white/5 backdrop-blur-sm mb-4 relative"
