@@ -18,6 +18,7 @@ export default function Header() {
           </a>
         </nav>
       </div>
+      <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
     </header>
   )
 }
