@@ -27,12 +27,23 @@ export default function HeroContent() {
 
         {/* Buttons */}
         <div className="flex items-center gap-4 flex-wrap">
-          <button className="px-8 py-3 rounded-full bg-transparent border border-white/30 text-white font-normal text-xs transition-all duration-200 hover:bg-white/10 hover:border-white/50 cursor-pointer">
-            Узнать цены
-          </button>
-          <button className="px-8 py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90 cursor-pointer">
-            Вызвать эвакуатор
-          </button>
+          <a
+            href="https://t.me/ug_transfer_online"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-8 py-3 rounded-full bg-transparent border border-white/30 text-white font-normal text-xs transition-all duration-200 hover:bg-white/10 hover:border-white/50"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.26 13.378l-2.968-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.896.181z"/>
+            </svg>
+            Написать в Telegram
+          </a>
+          <a
+            href="tel:+79956141414"
+            className="px-8 py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90"
+          >
+            Позвонить: +7 995 614-14-14
+          </a>
         </div>
       </div>
     </main>
