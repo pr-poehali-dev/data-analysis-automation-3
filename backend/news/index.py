@@ -70,24 +70,28 @@ def handler(event: dict, context) -> dict:
 
         if method == "POST":
             body = json.loads(event.get("body") or "{}")
+            date_val = body.get("date") or datetime.date.today().isoformat()
+            publish_at_val = body.get("publish_at") or None
             rows = conn.run(
-                "INSERT INTO news (title, content, date, publish_at) VALUES (:title, :content, COALESCE(:date::date, CURRENT_DATE), :publish_at) RETURNING id, title, content, date::text, publish_at",
+                "INSERT INTO news (title, content, date, publish_at) VALUES (:title, :content, :date, :publish_at) RETURNING id, title, content, date::text, publish_at",
                 title=body["title"],
                 content=body["content"],
-                date=body.get("date") or None,
-                publish_at=body.get("publish_at") or None,
+                date=date_val,
+                publish_at=publish_at_val,
             )
             data = row_to_dict(rows[0])
             return {"statusCode": 201, "headers": cors, "body": json.dumps(data, ensure_ascii=False)}
 
         if method == "PUT":
             body = json.loads(event.get("body") or "{}")
+            date_val = body.get("date") or datetime.date.today().isoformat()
+            publish_at_val = body.get("publish_at") or None
             rows = conn.run(
                 "UPDATE news SET title=:title, content=:content, date=:date, publish_at=:publish_at WHERE id=:id RETURNING id, title, content, date::text, publish_at",
                 title=body["title"],
                 content=body["content"],
-                date=body.get("date") or None,
-                publish_at=body.get("publish_at") or None,
+                date=date_val,
+                publish_at=publish_at_val,
                 id=body["id"]
             )
             if not rows:
