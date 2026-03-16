@@ -66,14 +66,6 @@ export default function Header({ onOpenModal }: HeaderProps) {
         </nav>
       </div>
       <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-      <div className="sm:hidden mt-3">
-        <button
-          onClick={onOpenModal}
-          className="w-full py-2.5 rounded-xl bg-white text-black text-sm font-medium active:scale-95 transition-all duration-200"
-        >
-          Оставить заявку
-        </button>
-      </div>
     </header>
   )
 }
