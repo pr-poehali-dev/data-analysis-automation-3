@@ -80,8 +80,10 @@ def handler(event: dict, context) -> dict:
         }
 
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
+    chat_id = os.environ.get('TELEGRAM_CHAT_ID', '-1002146850254')
+    print(f"TELEGRAM: token={'YES' if bot_token else 'NO'}, chat_id={chat_id}")
+
     if bot_token:
-        chat_id = '-1002146850254'
         message_thread_id = 6224
 
         text = (
@@ -92,7 +94,7 @@ def handler(event: dict, context) -> dict:
             f"💬 *Комментарий:* {comment if comment else 'нет'}"
         )
 
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        tg_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         data = urllib.parse.urlencode({
             'chat_id': chat_id,
             'text': text,
@@ -100,8 +102,12 @@ def handler(event: dict, context) -> dict:
             'message_thread_id': message_thread_id
         }).encode()
 
-        req = urllib.request.Request(url, data=data, method='POST')
-        urllib.request.urlopen(req)
+        try:
+            req = urllib.request.Request(tg_url, data=data, method='POST')
+            resp = urllib.request.urlopen(req)
+            print(f"TELEGRAM: sent OK, status={resp.status}")
+        except Exception as e:
+            print(f"TELEGRAM ERROR: {e}")
 
     try:
         send_email(name, phone, city, comment)
