@@ -43,7 +43,7 @@ export default function PulsingCircle() {
           </defs>
           <text className="text-sm fill-white/80">
             <textPath href="#circle" startOffset="0%">
-              Эвакуатор Крым · 24/7 · Эвакуатор Крым · 24/7 ·
+              Юг-Трансфер · 24/7 · Юг-Трансфер · 24/7 ·
             </textPath>
           </text>
         </motion.svg>

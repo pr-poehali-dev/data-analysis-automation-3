@@ -9,20 +9,20 @@ export default function HeroContent() {
           }}
         >
           <div className="absolute top-0 left-1 right-1 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-full" />
-          <span className="text-white/90 text-xs font-light relative z-10">Работаем 24/7 по всему Крыму</span>
+          <span className="text-white/90 text-xs font-light relative z-10">Эвакуатор и трансфер по всему Крыму · 24/7</span>
         </div>
 
         {/* Main Heading */}
         <h1 className="text-5xl md:text-6xl md:leading-16 tracking-tight font-light text-white mb-4">
-          <span className="font-medium italic">Эвакуатор</span> в Крыму
+          <span className="font-medium italic">Юг-Трансфер</span> —
           <br />
-          <span className="font-light tracking-tight text-white">быстро и надёжно</span>
+          <span className="font-light tracking-tight text-white">эвакуатор в Крыму</span>
         </h1>
 
         {/* Description */}
         <p className="text-xs font-light text-white/70 mb-4 leading-relaxed">
-          Подача эвакуатора за 30 минут в любой точке полуострова. Симферополь, Севастополь, Ялта, Керчь и другие города.
-          Перевозим легковые, грузовые автомобили и спецтехнику.
+          Подача за 30 минут в любую точку полуострова. Симферополь, Севастополь, Ялта, Керчь и другие города.
+          Легковые, грузовые автомобили и спецтехника. Работаем круглосуточно.
         </p>
 
         {/* Buttons */}
