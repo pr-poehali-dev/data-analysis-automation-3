@@ -80,11 +80,11 @@ def handler(event: dict, context) -> dict:
         }
 
     bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
-    chat_id = os.environ.get('TELEGRAM_CHAT_ID', '-1002146850254')
+    chat_id = '-1002146850254'
+    message_thread_id = 6224
     print(f"TELEGRAM: token={'YES' if bot_token else 'NO'}, chat_id={chat_id}")
 
     if bot_token:
-        message_thread_id = 6224
 
         text = (
             f"🚗 *Новая заявка на эвакуатор*\n\n"
