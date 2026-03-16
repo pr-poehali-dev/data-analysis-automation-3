@@ -1,6 +1,6 @@
 export default function Header() {
   return (
-    <header className="absolute top-0 left-0 right-0 z-11 p-6">
+    <header className="fixed top-0 left-0 right-0 z-50 p-6 bg-black/60 backdrop-blur-md transition-all duration-300">
       <div className="flex justify-between items-center">
         <a href="/" onClick={() => window.location.reload()} className="cursor-pointer">
           <img
