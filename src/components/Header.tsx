@@ -23,17 +23,23 @@ export default function Header({ onOpenModal }: HeaderProps) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 p-6 bg-black/60 backdrop-blur-md transition-all duration-300">
+      <header className="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4 sm:py-6 bg-black/60 backdrop-blur-md transition-all duration-300">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-8">
-            <a href="/" onClick={() => window.location.reload()} className="cursor-pointer">
-              <img
-                src="https://cdn.poehali.dev/projects/b275e081-8e63-4958-8c50-b2e74190fc81/bucket/a0cb0a3c-3212-4748-965c-9d6888d8d1ab.png"
-                alt="Юг-Трансфер"
-                className="h-10 w-auto object-contain hover:opacity-80 transition-opacity duration-200"
-              />
-            </a>
-            <nav className="hidden lg:flex items-center gap-6">
+          <a href="/" onClick={() => window.location.reload()} className="cursor-pointer shrink-0">
+            <img
+              src="https://cdn.poehali.dev/projects/b275e081-8e63-4958-8c50-b2e74190fc81/bucket/a0cb0a3c-3212-4748-965c-9d6888d8d1ab.png"
+              alt="Юг-Трансфер"
+              className="h-8 sm:h-10 w-auto object-contain hover:opacity-80 transition-opacity duration-200"
+            />
+          </a>
+          <a
+            href="tel:+79956141414"
+            className="sm:hidden text-white text-sm font-medium"
+          >
+            +7 995 614-14-14
+          </a>
+          <div className="flex items-center gap-4">
+            <nav className="hidden lg:flex items-center gap-6 mr-4">
               <a href="/" onClick={() => window.location.reload()} className="text-white/80 hover:text-white transition-colors text-sm">
                 Главная
               </a>
@@ -50,8 +56,6 @@ export default function Header({ onOpenModal }: HeaderProps) {
                 Партнёры
               </button>
             </nav>
-          </div>
-          <div className="flex items-center gap-4">
             <a
               href="tel:+79956141414"
               className="hidden sm:block text-white hover:text-neutral-400 transition-colors duration-300 uppercase text-sm font-medium"
