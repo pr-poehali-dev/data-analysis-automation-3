@@ -1,5 +1,6 @@
 import { useState } from "react"
 import Icon from "@/components/ui/icon"
+import CitySearch from "@/components/CitySearch"
 
 const FUNCTION_URL = "https://functions.poehali.dev/38f29e26-2de0-4449-a92a-fb914d4bff1d"
 
@@ -148,19 +149,13 @@ export default function OrderForm() {
 
             {orderType === "city" ? (
               <>
-                <select
-                  name="city"
+                <CitySearch
                   value={form.city}
-                  onChange={handleChange}
+                  onChange={(city) => setForm({ ...form, city })}
+                  cities={CRIMEA_CITIES}
+                  placeholder="Введите город *"
                   required
-                  className={`${inputClass} appearance-none`}
-                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" }}
-                >
-                  <option value="" disabled className="bg-neutral-900 text-white/30">Выберите город *</option>
-                  {CRIMEA_CITIES.map(city => (
-                    <option key={city} value={city} className="bg-neutral-900 text-white">{city}</option>
-                  ))}
-                </select>
+                />
                 {form.city && (
                   <div className="flex items-center justify-between bg-yellow-400/10 border border-yellow-400/30 rounded-xl px-4 py-3">
                     <span className="text-white/70 text-sm">Эвакуатор по городу</span>
@@ -170,32 +165,20 @@ export default function OrderForm() {
               </>
             ) : (
               <>
-                <select
-                  name="from"
+                <CitySearch
                   value={form.from}
-                  onChange={handleChange}
+                  onChange={(city) => setForm({ ...form, from: city })}
+                  cities={CRIMEA_CITIES}
+                  placeholder="Откуда *"
                   required
-                  className={`${inputClass} appearance-none`}
-                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" }}
-                >
-                  <option value="" disabled className="bg-neutral-900 text-white/30">Откуда *</option>
-                  {CRIMEA_CITIES.map(city => (
-                    <option key={city} value={city} className="bg-neutral-900 text-white">{city}</option>
-                  ))}
-                </select>
-                <select
-                  name="to"
+                />
+                <CitySearch
                   value={form.to}
-                  onChange={handleChange}
+                  onChange={(city) => setForm({ ...form, to: city })}
+                  cities={CRIMEA_CITIES}
+                  placeholder="Куда *"
                   required
-                  className={`${inputClass} appearance-none`}
-                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 16px center" }}
-                >
-                  <option value="" disabled className="bg-neutral-900 text-white/30">Куда *</option>
-                  {CRIMEA_CITIES.map(city => (
-                    <option key={city} value={city} className="bg-neutral-900 text-white">{city}</option>
-                  ))}
-                </select>
+                />
                 {form.from && form.to && (
                   <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-xl px-4 py-3 space-y-1">
                     <div className="flex items-center justify-between">
