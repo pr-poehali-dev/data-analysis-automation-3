@@ -78,7 +78,7 @@ export default function Header({ onOpenModal }: HeaderProps) {
           </button>
         </nav>
       </div>
-      <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-yellow-400" />
     </header>
   )
 }

@@ -4,7 +4,7 @@ interface FooterProps {
 
 export default function Footer({ onOpenPolicy }: FooterProps) {
   return (
-    <footer className="relative z-20 w-full bg-black/40 backdrop-blur-md border-t border-white/10 px-6 py-8">
+    <footer className="relative z-20 w-full bg-black/40 backdrop-blur-md border-t-2 border-yellow-400 px-6 py-8">
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* О нас */}
         <div>
