@@ -12,6 +12,7 @@ interface NewsItem {
   title: string
   content: string
   date: string
+  image_url: string | null
 }
 
 function formatDate(dateStr: string) {
@@ -71,6 +72,9 @@ export default function NewsDetail() {
               <p className="text-white/40 text-xs mb-3">{formatDate(item.date)}</p>
               <h1 className="text-white text-2xl md:text-3xl font-light mb-4 leading-snug">{item.title}</h1>
               <div className="w-12 h-[2px] bg-yellow-400 mb-6" />
+              {item.image_url && (
+                <img src={item.image_url} alt={item.title} className="w-full rounded-xl mb-6 object-cover max-h-[400px]" />
+              )}
               <div className="text-white/70 text-sm leading-relaxed whitespace-pre-wrap">{item.content}</div>
             </article>
           )}

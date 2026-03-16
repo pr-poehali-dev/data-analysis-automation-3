@@ -11,6 +11,7 @@ interface NewsItem {
   content: string
   date: string
   publish_at: string | null
+  image_url: string | null
 }
 
 function isPublished(item: NewsItem) {
@@ -50,6 +51,8 @@ export default function Admin() {
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<number | null>(null)
   const [form, setForm] = useState({ title: "", content: "", date: "", publish_at: "" })
+  const [imageFile, setImageFile] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -73,6 +76,23 @@ export default function Admin() {
     if (isAuth) loadNews()
   }, [isAuth])
 
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const base64 = reader.result as string
+      setImageFile(base64)
+      setImagePreview(base64)
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function clearImage() {
+    setImageFile(null)
+    setImagePreview(null)
+  }
+
   async function handleAdd() {
     if (!form.title || !form.content) return
     setSaving(true)
@@ -84,9 +104,11 @@ export default function Admin() {
         content: form.content,
         date: form.date || undefined,
         publish_at: form.publish_at ? localToISO(form.publish_at) : null,
+        image: imageFile || undefined,
       }),
     })
     setForm({ title: "", content: "", date: "", publish_at: "" })
+    clearImage()
     await loadNews()
     setSaving(false)
   }
@@ -99,6 +121,8 @@ export default function Admin() {
       date: item.date,
       publish_at: isoToLocal(item.publish_at),
     })
+    setImageFile(null)
+    setImagePreview(item.image_url || null)
   }
 
   async function handleSave() {
@@ -113,10 +137,12 @@ export default function Admin() {
         content: form.content,
         date: form.date || undefined,
         publish_at: form.publish_at ? localToISO(form.publish_at) : null,
+        image: imageFile || undefined,
       }),
     })
     setEditId(null)
     setForm({ title: "", content: "", date: "", publish_at: "" })
+    clearImage()
     await loadNews()
     setSaving(false)
   }
@@ -222,6 +248,23 @@ export default function Admin() {
                 className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors"
               />
             </div>
+            <div>
+              <label className="text-white/40 text-xs mb-1 block">Фото к новости</label>
+              <div className="flex items-center gap-3">
+                <label className="cursor-pointer px-4 py-2 rounded-lg border border-white/10 text-white/50 text-sm hover:border-white/30 transition-colors">
+                  {imagePreview ? "Заменить фото" : "Выбрать фото"}
+                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                </label>
+                {imagePreview && (
+                  <button onClick={clearImage} className="text-red-400/60 hover:text-red-400 text-xs transition-colors">
+                    Удалить
+                  </button>
+                )}
+              </div>
+              {imagePreview && (
+                <img src={imagePreview} alt="Превью" className="mt-2 rounded-lg max-h-40 object-cover" />
+              )}
+            </div>
             {form.publish_at && new Date(form.publish_at) > new Date() && (
               <p className="text-amber-400/70 text-xs flex items-center gap-1">
                 ⏰ Новость будет опубликована {formatPublishAt(localToISO(form.publish_at))}
@@ -238,7 +281,7 @@ export default function Admin() {
                     {saving ? "Сохранение..." : "Сохранить"}
                   </button>
                   <button
-                    onClick={() => { setEditId(null); setForm({ title: "", content: "", date: "", publish_at: "" }) }}
+                    onClick={() => { setEditId(null); setForm({ title: "", content: "", date: "", publish_at: "" }); clearImage() }}
                     className="px-4 py-2.5 rounded-lg border border-white/10 text-white/50 text-sm hover:border-white/30 transition-colors"
                   >
                     Отмена
@@ -271,6 +314,9 @@ export default function Admin() {
           {news.map(item => (
             <div key={item.id} className={`bg-zinc-900 border rounded-xl p-5 ${isPublished(item) ? "border-white/10" : "border-amber-400/20"}`}>
               <div className="flex items-start justify-between gap-4">
+                {item.image_url && (
+                  <img src={item.image_url} alt="" className="w-16 h-16 rounded-lg object-cover shrink-0" />
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     {isPublished(item) ? (

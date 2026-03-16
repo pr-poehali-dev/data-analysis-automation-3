@@ -12,6 +12,7 @@ interface NewsItem {
   title: string
   content: string
   date: string
+  image_url: string | null
 }
 
 function formatDate(dateStr: string) {
@@ -58,14 +59,19 @@ export default function News() {
               <article
                 key={item.id}
                 onClick={() => navigate(`/news/${item.id}`)}
-                className="group bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl p-6 cursor-pointer transition-all duration-200 border-l-2 border-l-yellow-400"
+                className="group bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-2xl overflow-hidden cursor-pointer transition-all duration-200 border-l-2 border-l-yellow-400"
               >
-                <p className="text-white/40 text-xs mb-2">{formatDate(item.date)}</p>
-                <h2 className="text-white text-base font-medium mb-2 group-hover:text-white/90 transition-colors">{item.title}</h2>
-                <p className="text-white/60 text-sm leading-relaxed line-clamp-3">{item.content}</p>
-                <span className="inline-block mt-3 text-white/40 text-xs group-hover:text-white/70 transition-colors">
-                  Читать далее →
-                </span>
+                {item.image_url && (
+                  <img src={item.image_url} alt="" className="w-full h-48 object-cover" />
+                )}
+                <div className="p-6">
+                  <p className="text-white/40 text-xs mb-2">{formatDate(item.date)}</p>
+                  <h2 className="text-white text-base font-medium mb-2 group-hover:text-white/90 transition-colors">{item.title}</h2>
+                  <p className="text-white/60 text-sm leading-relaxed line-clamp-3">{item.content}</p>
+                  <span className="inline-block mt-3 text-white/40 text-xs group-hover:text-white/70 transition-colors">
+                    Читать далее →
+                  </span>
+                </div>
               </article>
             ))}
           </div>
