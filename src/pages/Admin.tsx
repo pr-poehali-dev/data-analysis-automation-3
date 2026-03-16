@@ -10,6 +10,32 @@ interface NewsItem {
   title: string
   content: string
   date: string
+  publish_at: string | null
+}
+
+function isPublished(item: NewsItem) {
+  if (!item.publish_at) return true
+  return new Date(item.publish_at) <= new Date()
+}
+
+function formatPublishAt(iso: string | null) {
+  if (!iso) return null
+  const d = new Date(iso)
+  return d.toLocaleString("ru-RU", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
+}
+
+// Преобразует datetime-local value (2024-01-15T10:30) в ISO для бэкенда
+function localToISO(val: string) {
+  if (!val) return null
+  return new Date(val).toISOString()
+}
+
+// Преобразует ISO -> datetime-local input value
+function isoToLocal(iso: string | null) {
+  if (!iso) return ""
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, "0")
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
 export default function Admin() {
@@ -23,7 +49,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<number | null>(null)
-  const [form, setForm] = useState({ title: "", content: "", date: "" })
+  const [form, setForm] = useState({ title: "", content: "", date: "", publish_at: "" })
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -37,7 +63,7 @@ export default function Admin() {
 
   async function loadNews() {
     setLoading(true)
-    const r = await fetch(NEWS_URL)
+    const r = await fetch(`${NEWS_URL}?admin=1`)
     const data = await r.json()
     setNews(data)
     setLoading(false)
@@ -53,16 +79,26 @@ export default function Admin() {
     await fetch(NEWS_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: form.title, content: form.content, date: form.date || undefined }),
+      body: JSON.stringify({
+        title: form.title,
+        content: form.content,
+        date: form.date || undefined,
+        publish_at: form.publish_at ? localToISO(form.publish_at) : null,
+      }),
     })
-    setForm({ title: "", content: "", date: "" })
+    setForm({ title: "", content: "", date: "", publish_at: "" })
     await loadNews()
     setSaving(false)
   }
 
   function handleEdit(item: NewsItem) {
     setEditId(item.id)
-    setForm({ title: item.title, content: item.content, date: item.date })
+    setForm({
+      title: item.title,
+      content: item.content,
+      date: item.date,
+      publish_at: isoToLocal(item.publish_at),
+    })
   }
 
   async function handleSave() {
@@ -71,10 +107,16 @@ export default function Admin() {
     await fetch(NEWS_URL, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: editId, title: form.title, content: form.content, date: form.date }),
+      body: JSON.stringify({
+        id: editId,
+        title: form.title,
+        content: form.content,
+        date: form.date || undefined,
+        publish_at: form.publish_at ? localToISO(form.publish_at) : null,
+      }),
     })
     setEditId(null)
-    setForm({ title: "", content: "", date: "" })
+    setForm({ title: "", content: "", date: "", publish_at: "" })
     await loadNews()
     setSaving(false)
   }
@@ -171,12 +213,31 @@ export default function Admin() {
               rows={5}
               className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors placeholder:text-white/30 resize-none"
             />
-            <input
-              type="date"
-              value={form.date}
-              onChange={e => setForm({ ...form, date: e.target.value })}
-              className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors"
-            />
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="text-white/40 text-xs mb-1 block">Дата новости</label>
+                <input
+                  type="date"
+                  value={form.date}
+                  onChange={e => setForm({ ...form, date: e.target.value })}
+                  className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-white/40 text-xs mb-1 block">Дата и время публикации</label>
+                <input
+                  type="datetime-local"
+                  value={form.publish_at}
+                  onChange={e => setForm({ ...form, publish_at: e.target.value })}
+                  className="w-full bg-zinc-800 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm outline-none focus:border-white/30 transition-colors"
+                />
+              </div>
+            </div>
+            {form.publish_at && new Date(form.publish_at) > new Date() && (
+              <p className="text-amber-400/70 text-xs flex items-center gap-1">
+                ⏰ Новость будет опубликована {formatPublishAt(localToISO(form.publish_at))}
+              </p>
+            )}
             <div className="flex gap-2">
               {editId ? (
                 <>
@@ -188,7 +249,7 @@ export default function Admin() {
                     {saving ? "Сохранение..." : "Сохранить"}
                   </button>
                   <button
-                    onClick={() => { setEditId(null); setForm({ title: "", content: "", date: "" }) }}
+                    onClick={() => { setEditId(null); setForm({ title: "", content: "", date: "", publish_at: "" }) }}
                     className="px-4 py-2.5 rounded-lg border border-white/10 text-white/50 text-sm hover:border-white/30 transition-colors"
                   >
                     Отмена
@@ -200,7 +261,7 @@ export default function Admin() {
                   disabled={saving || !form.title || !form.content}
                   className="flex-1 bg-white text-black text-sm font-medium py-2.5 rounded-lg hover:bg-white/90 active:scale-95 transition-all duration-200 disabled:opacity-50"
                 >
-                  {saving ? "Публикация..." : "Опубликовать"}
+                  {saving ? "Сохранение..." : form.publish_at && new Date(form.publish_at) > new Date() ? "Запланировать" : "Опубликовать"}
                 </button>
               )}
             </div>
@@ -219,10 +280,16 @@ export default function Admin() {
             <p className="text-white/30 text-sm text-center py-8">Новостей пока нет</p>
           )}
           {news.map(item => (
-            <div key={item.id} className="bg-zinc-900 border border-white/10 rounded-xl p-5">
+            <div key={item.id} className={`bg-zinc-900 border rounded-xl p-5 ${isPublished(item) ? "border-white/10" : "border-amber-400/20"}`}>
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <p className="text-white/40 text-xs mb-1">{item.date}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    {isPublished(item) ? (
+                      <span className="text-green-400/70 text-xs">● Опубликовано</span>
+                    ) : (
+                      <span className="text-amber-400/70 text-xs">⏰ Запланировано · {formatPublishAt(item.publish_at)}</span>
+                    )}
+                  </div>
                   <h3 className="text-white text-sm font-medium mb-1 truncate">{item.title}</h3>
                   <p className="text-white/60 text-xs leading-relaxed line-clamp-2">{item.content}</p>
                 </div>
