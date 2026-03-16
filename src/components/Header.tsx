@@ -63,13 +63,22 @@ export default function Header() {
             <div className="w-px h-4 bg-white/30" />
             <button
               onClick={() => setModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-white text-black text-sm font-medium hover:bg-white/90 active:scale-95 transition-all duration-200"
+              className="hidden sm:block px-4 py-2 rounded-xl bg-white text-black text-sm font-medium hover:bg-white/90 active:scale-95 transition-all duration-200"
             >
               Оставить заявку
             </button>
           </nav>
         </div>
         <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        {/* Мобильная кнопка под шапкой */}
+        <div className="sm:hidden mt-3">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="w-full py-2.5 rounded-xl bg-white text-black text-sm font-medium active:scale-95 transition-all duration-200"
+          >
+            Оставить заявку
+          </button>
+        </div>
       </header>
       <OrderModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>
