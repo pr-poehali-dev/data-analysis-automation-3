@@ -2,13 +2,26 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 p-6 bg-black/60 backdrop-blur-md transition-all duration-300">
       <div className="flex justify-between items-center">
-        <a href="/" onClick={() => window.location.reload()} className="cursor-pointer">
-          <img
-            src="https://cdn.poehali.dev/projects/b275e081-8e63-4958-8c50-b2e74190fc81/bucket/a0cb0a3c-3212-4748-965c-9d6888d8d1ab.png"
-            alt="Юг-Трансфер"
-            className="h-10 w-auto object-contain hover:opacity-80 transition-opacity duration-200"
-          />
-        </a>
+        <div className="flex items-center gap-8">
+          <a href="/" onClick={() => window.location.reload()} className="cursor-pointer">
+            <img
+              src="https://cdn.poehali.dev/projects/b275e081-8e63-4958-8c50-b2e74190fc81/bucket/a0cb0a3c-3212-4748-965c-9d6888d8d1ab.png"
+              alt="Юг-Трансфер"
+              className="h-10 w-auto object-contain hover:opacity-80 transition-opacity duration-200"
+            />
+          </a>
+          <nav className="hidden md:flex items-center gap-6">
+            <a href="/" onClick={() => window.location.reload()} className="text-white/80 hover:text-white transition-colors text-sm">
+              Главная
+            </a>
+            <a href="https://ug-transfer.online/" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors text-sm">
+              Заказать такси
+            </a>
+            <a href="#news" className="text-white/80 hover:text-white transition-colors text-sm">
+              Новости
+            </a>
+          </nav>
+        </div>
         <nav className="flex items-center gap-4">
           <a
             href="tel:+79956141414"
