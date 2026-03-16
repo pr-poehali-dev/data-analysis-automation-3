@@ -33,7 +33,7 @@ export default function HeroContent({ onOpenModal }: HeroContentProps) {
         <div className="flex items-center gap-4 flex-wrap">
           <button
             onClick={onOpenModal}
-            className="md:hidden px-8 py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90 active:scale-95"
+            className="md:hidden px-8 py-3 rounded-full bg-yellow-400 text-black font-normal text-xs transition-all duration-200 hover:bg-yellow-300 active:scale-95"
           >
             Оставить заявку
           </button>
@@ -50,7 +50,7 @@ export default function HeroContent({ onOpenModal }: HeroContentProps) {
           </a>
           <button
             onClick={onOpenModal}
-            className="hidden md:block px-8 py-3 rounded-full bg-white text-black font-normal text-xs transition-all duration-200 hover:bg-white/90 active:scale-95"
+            className="hidden md:block px-8 py-3 rounded-full bg-yellow-400 text-black font-normal text-xs transition-all duration-200 hover:bg-yellow-300 active:scale-95"
           >
             Оставить заявку
           </button>
