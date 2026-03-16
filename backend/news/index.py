@@ -79,6 +79,7 @@ def handler(event: dict, context) -> dict:
                 date=date_val,
                 publish_at=publish_at_val,
             )
+            conn.run("COMMIT")
             data = row_to_dict(rows[0])
             return {"statusCode": 201, "headers": cors, "body": json.dumps(data, ensure_ascii=False)}
 
@@ -94,6 +95,7 @@ def handler(event: dict, context) -> dict:
                 publish_at=publish_at_val,
                 id=body["id"]
             )
+            conn.run("COMMIT")
             if not rows:
                 return {"statusCode": 404, "headers": cors, "body": json.dumps({"error": "Not found"})}
             data = row_to_dict(rows[0])
@@ -101,6 +103,7 @@ def handler(event: dict, context) -> dict:
 
         if method == "DELETE":
             conn.run("DELETE FROM news WHERE id=:id", id=int(news_id))
+            conn.run("COMMIT")
             return {"statusCode": 200, "headers": cors, "body": json.dumps({"ok": True})}
 
         return {"statusCode": 405, "headers": cors, "body": json.dumps({"error": "Method not allowed"})}
