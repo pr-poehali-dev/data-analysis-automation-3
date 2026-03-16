@@ -29,7 +29,13 @@ export default function Header({ onOpenModal }: HeaderProps) {
         <nav className="flex items-center gap-4">
           <a
             href="tel:+79956141414"
-            className="text-white hover:text-neutral-400 transition-colors duration-300 uppercase text-sm font-medium"
+            className="sm:hidden px-3 py-1.5 rounded-lg border border-white/30 text-white text-xs font-medium hover:bg-white/10 transition-colors duration-200"
+          >
+            Позвонить
+          </a>
+          <a
+            href="tel:+79956141414"
+            className="hidden sm:block text-white hover:text-neutral-400 transition-colors duration-300 uppercase text-sm font-medium"
           >
             +7 995 614-14-14
           </a>
