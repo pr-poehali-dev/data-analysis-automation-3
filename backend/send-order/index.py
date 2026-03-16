@@ -105,8 +105,9 @@ def handler(event: dict, context) -> dict:
 
     try:
         send_email(name, phone, city, comment)
-    except Exception:
-        pass
+        print("EMAIL: sent OK")
+    except Exception as e:
+        print(f"EMAIL ERROR: {e}")
 
     return {
         'statusCode': 200,
