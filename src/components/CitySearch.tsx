@@ -73,8 +73,16 @@ export default function CitySearch({ value, onChange, cities, placeholder, requi
                 {city}
               </button>
             ))
+          ) : search.trim() ? (
+            <button
+              type="button"
+              onClick={() => handleSelect(search.trim())}
+              className="w-full text-left px-4 py-2.5 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-colors rounded-xl"
+            >
+              Выбрать «{search.trim()}»
+            </button>
           ) : (
-            <div className="px-4 py-3 text-white/30 text-sm">Ничего не найдено</div>
+            <div className="px-4 py-3 text-white/30 text-sm">Начните вводить название</div>
           )}
         </div>
       )}
