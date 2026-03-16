@@ -67,7 +67,7 @@ export default function HeroContent({ onOpenModal }: HeroContentProps) {
         <img
           src="https://cdn.poehali.dev/projects/b275e081-8e63-4958-8c50-b2e74190fc81/bucket/1eec948d-f678-41ff-add6-277e63ed612e.jpg"
           alt="Эвакуатор"
-          className="max-w-[550px] w-full object-contain drop-shadow-2xl"
+          className="max-w-[550px] w-full object-contain drop-shadow-2xl rounded-2xl border-2 border-yellow-400"
         />
       </div>
       </div>
