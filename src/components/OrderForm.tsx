@@ -66,7 +66,7 @@ export default function OrderForm() {
     setStatus("loading")
 
     const payload = orderType === "city"
-      ? { phone: form.phone, name: form.name, city: form.city, orderType: "city", price: "5 000 ₽" }
+      ? { phone: form.phone, name: form.name, city: form.city, orderType: "city", price: "3 500 ₽" }
       : { phone: form.phone, name: form.name, from: form.from, to: form.to, orderType: "route", price: "3 500 ₽ подача + 73 ₽/км" }
 
     try {
@@ -175,7 +175,7 @@ export default function OrderForm() {
                 {form.city && (
                   <div className="flex items-center justify-between bg-yellow-400/10 border border-yellow-400/30 rounded-xl px-4 py-3">
                     <span className="text-white/70 text-sm">Эвакуатор по городу</span>
-                    <span className="text-yellow-400 text-lg font-bold">5 000 ₽</span>
+                    <span className="text-yellow-400 text-lg font-bold">3 500 ₽</span>
                   </div>
                 )}
               </>
