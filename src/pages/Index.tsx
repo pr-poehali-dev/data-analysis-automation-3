@@ -2,6 +2,7 @@ import { useState } from "react"
 import ShaderBackground from "@/components/ShaderBackground"
 import HeroContent from "@/components/HeroContent"
 import OurWorks from "@/components/OurWorks"
+import Reviews from "@/components/Reviews"
 
 import Header from "@/components/Header"
 import OrderModal from "@/components/OrderModal"
@@ -20,6 +21,7 @@ const Index = () => {
         <OrderModal open={modalOpen} onClose={() => setModalOpen(false)} />
       </ShaderBackground>
       <OurWorks />
+      <Reviews />
       <Footer onOpenPolicy={(type) => setPolicyType(type)} />
       <PolicyModal
         open={policyType !== null}
