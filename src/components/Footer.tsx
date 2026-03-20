@@ -50,8 +50,9 @@ export default function Footer({ onOpenPolicy }: FooterProps) {
                 className="text-white/50 hover:text-white transition-colors"
                 title="MAX"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.2 14.4L12 14l-3.2 2.4.8-3.8L6.4 9.8l3.9-.2L12 6l1.7 3.6 3.9.2-3.2 2.8.8 3.8z"/>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2C6.48 2 2 6.04 2 11.1c0 2.8 1.4 5.3 3.6 6.9l-1.1 3.5c-.1.3.2.6.5.4l3.8-2.1c1 .3 2.1.5 3.2.5 5.52 0 10-4.04 10-9.1S17.52 2 12 2z" fill="currentColor"/>
+                  <path d="M12 5.5c-3.59 0-6.5 2.51-6.5 5.6 0 3.09 2.91 5.6 6.5 5.6.56 0 1.1-.07 1.62-.2l2.38 1.3c.2.1.4-.1.35-.3l-.65-2.1C17.18 14.2 18.5 12.5 18.5 11.1c0-3.09-2.91-5.6-6.5-5.6z" fill="black" fillOpacity="0.9"/>
                 </svg>
               </a>
 
